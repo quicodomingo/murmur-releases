@@ -1,0 +1,72 @@
+{
+  "models": {
+    "transcription": {
+      "version": 1,
+      "minApp": "0.2.0",
+      "notes": "Conformer català-castellà d'AINA, detecció de veu i models de parlants",
+      "files": [
+        {
+          "name": "conformer-ca-es-sherpa/encoder.onnx",
+          "url": "https://huggingface.co/quicodomingo/murmur-models/resolve/main/conformer-ca-es-sherpa/encoder.onnx",
+          "bytes": 481422175,
+          "sha256": "bfefe0f94e247475eb5c023a753c1e074b29419f3a441180d9b0b5aeaa5c9590"
+        },
+        {
+          "name": "conformer-ca-es-sherpa/decoder.onnx",
+          "url": "https://huggingface.co/quicodomingo/murmur-models/resolve/main/conformer-ca-es-sherpa/decoder.onnx",
+          "bytes": 13787005,
+          "sha256": "cc38a51494333377c3e7b1a7efdf251913a04e93a43d66b8cd12d4858ba78a58"
+        },
+        {
+          "name": "conformer-ca-es-sherpa/joiner.onnx",
+          "url": "https://huggingface.co/quicodomingo/murmur-models/resolve/main/conformer-ca-es-sherpa/joiner.onnx",
+          "bytes": 3614881,
+          "sha256": "c168756f6e8a4a5f5677444e8c194e494f697c6a8668133c1d753cb499f445f7"
+        },
+        {
+          "name": "conformer-ca-es-sherpa/tokens.txt",
+          "url": "https://huggingface.co/quicodomingo/murmur-models/resolve/main/conformer-ca-es-sherpa/tokens.txt",
+          "bytes": 1955,
+          "sha256": "0451223f8209d957022aa856857a470731b2dbbcf2ea39e83dee2f298d45682c"
+        },
+        {
+          "name": "silero_vad.onnx",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx",
+          "bytes": 643854,
+          "sha256": "9e2449e1087496d8d4caba907f23e0bd3f78d91fa552479bb9c23ac09cbb1fd6"
+        },
+        {
+          "name": "nemo_en_titanet_small.onnx",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/nemo_en_titanet_small.onnx",
+          "bytes": 40257283,
+          "sha256": "ad4a1802485d8b34c722d2a9d04249662f2ece5d28a7a039063ca22f515a789e"
+        },
+        {
+          "name": "3dspeaker_eres2net_base.onnx",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/3dspeaker_speech_eres2net_base_sv_zh-cn_3dspeaker_16k.onnx",
+          "bytes": 39593761,
+          "sha256": "1a331345f04805badbb495c775a6ddffcdd1a732567d5ec8b3d5749e3c7a5e4b"
+        },
+        {
+          "name": "sherpa-onnx-pyannote-segmentation-3-0/model.onnx",
+          "url": "https://huggingface.co/csukuangfj/sherpa-onnx-pyannote-segmentation-3-0/resolve/main/model.onnx",
+          "bytes": 5992913,
+          "sha256": "220ad67ca923bef2fa91f2390c786097bf305bceb5e261d4af67b38e938e1079"
+        }
+      ]
+    },
+    "llm": {
+      "version": 1,
+      "minApp": "0.2.0",
+      "notes": "Gemma 4 E4B",
+      "files": [
+        {
+          "name": "gemma-4-E4B_q4_0-it.gguf",
+          "url": "https://huggingface.co/google/gemma-4-E4B-it-qat-q4_0-gguf/resolve/main/gemma-4-E4B_q4_0-it.gguf",
+          "bytes": 5154941280,
+          "sha256": "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee"
+        }
+      ]
+    }
+  }
+}
