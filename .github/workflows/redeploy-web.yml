@@ -1,0 +1,19 @@
+# Quan es publica una versió nova, torna a compilar la web (murmur-web a Cloudflare)
+# perquè el botó de descàrrega apunti al .dmg nou. La URL del deploy hook és al secret PAGES_DEPLOY_HOOK.
+name: Torna a publicar la web
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crida el deploy hook de Cloudflare
+        env:
+          HOOK: ${{ secrets.PAGES_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "Falta el secret PAGES_DEPLOY_HOOK"; exit 1; fi
+          curl -fsS -X POST "$HOOK"
