@@ -1,5 +1,8 @@
 # Quan es publica una versió nova, torna a compilar la web (murmur-web a Cloudflare)
-# perquè el botó de descàrrega apunti al .dmg nou. La URL del deploy hook és al secret PAGES_DEPLOY_HOOK.
+# perquè els botons de descàrrega apuntin als instal·ladors nous. La URL del deploy hook és al secret PAGES_DEPLOY_HOOK.
+#
+# La versió es crea abans que s'hi pugin els fitxers (release.yml del repo de l'app hi afegeix el Mac,
+# Windows i Linux després), així que primer s'espera que la llista de fitxers deixi de canviar.
 name: Torna a publicar la web
 
 on:
@@ -7,10 +10,32 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   redeploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
+      - name: Espera que la versió tingui tots els fitxers
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          # Tres minuts seguits sense fitxers nous (com a màxim 45 minuts).
+          prev=""; same=0
+          for i in $(seq 1 45); do
+            now=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets \
+              --jq '[.assets[] | select(.state == "uploaded") | .name] | sort | join(" ")')
+            if [ -n "$now" ] && [ "$now" = "$prev" ]; then same=$((same + 1)); else same=0; fi
+            if [ "$same" -ge 3 ]; then echo "Fitxers: $now"; exit 0; fi
+            prev="$now"
+            sleep 60
+          done
+          echo "La llista de fitxers no s'ha aturat en 45 minuts: es publica igualment."
+
       - name: Crida el deploy hook de Cloudflare
         env:
           HOOK: ${{ secrets.PAGES_DEPLOY_HOOK }}
