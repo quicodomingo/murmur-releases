@@ -3,18 +3,51 @@
 #
 # La versió es crea abans que s'hi pugin els fitxers (release.yml del repo de l'app hi afegeix el Mac,
 # Windows i Linux després), així que primer s'espera que la llista de fitxers deixi de canviar.
+#
+# Però el Mac sol arribar hores abans que els fitxers de PC (que esperen la compilació i l'aprovació),
+# i pujar fitxers a una versió que ja existeix no torna a engegar res. Per això, cada 30 minuts,
+# «comprova» mira si la web publicada enllaça tots els instal·ladors de l'última versió i, si en
+# falta algun (un .exe, l'ARM, un paquet de Linux…), torna a publicar-la. Si no en falta cap, no fa res.
 name: Torna a publicar la web
 
 on:
   release:
     types: [published]
+  schedule:
+    - cron: "17,47 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  comprova:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: La web enllaça tots els instal·ladors de l'última versió?
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HOOK: ${{ secrets.PAGES_DEPLOY_HOOK }}
+          WEB: https://murmur.quicodomingo.com/
+        run: |
+          files=$(gh release view --repo "$GITHUB_REPOSITORY" --json assets \
+            --jq '.assets[] | select(.state == "uploaded") | .name' \
+            | grep -E '\.dmg$|-setup\.exe$|\.AppImage$|\.deb$|\.rpm$' || true)
+          if [ -z "$files" ]; then echo "L'última versió no té instal·ladors"; exit 0; fi
+          page=$(curl -fsSL "$WEB")
+          missing=""
+          for f in $files; do
+            grep -qF "/$f\"" <<<"$page" || missing="$missing $f"
+          done
+          if [ -z "$missing" ]; then echo "La web ja els enllaça tots"; exit 0; fi
+          echo "La web no enllaça:$missing. La torno a publicar."
+          if [ -z "$HOOK" ]; then echo "Falta el secret PAGES_DEPLOY_HOOK"; exit 1; fi
+          curl -fsS -X POST "$HOOK"
+
   redeploy:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
